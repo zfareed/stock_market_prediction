@@ -6,13 +6,13 @@ class NewsRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-        title: Text('News'),
+          title: Text('News Route'),
         ),
-      body: Container(
-       child: Column(
-         
-       )
-      ),
+        body: Container(
+          margin: EdgeInsets.all(100),
+          color: Colors.redAccent,
+          child: Text('MY NEWS', style: TextStyle(color: Colors.black, fontSize: 30.0),),
+        )
     );
   }
 }

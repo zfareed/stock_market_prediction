@@ -1,5 +1,4 @@
-import 'dart:html';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:stock_market_prediction/pages/stocks.dart';
 import 'pages/news.dart';
@@ -8,17 +7,28 @@ import 'pages/home.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  final appTitle = 'Drawer Demo';
+  final appTitle = 'Stock Market Prediction';
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: appTitle,
       home: MyHomePage(title: appTitle),
-      theme: ThemeData(
-        primaryColor: Color(0xFF6200EE),
-        backgroundColor: Color(0xff344955)
-      ),
+    theme: ThemeData(
+      primaryColor: Color(0xFF6200EE),
+      backgroundColor: Color(0xff344955),
+
+    // Define the default font family.
+    fontFamily: 'Georgia',
+
+    // Define the default TextTheme. Use this to specify the default
+    // text styling for headlines, titles, bodies of text, and more.
+    textTheme: TextTheme(
+    headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+    headline6: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
+    bodyText1: TextStyle(fontSize: 20.0, fontStyle: FontStyle.italic)
+    ),
+    ),
     );
   }
 }
@@ -34,7 +44,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedDestination = 0;
-  int _currentPage = 0;
+  int _currentPage = 1;
   final List<Widget> _pages = [
     HomeRoute(),
     StocksRoute(),
@@ -88,10 +98,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-        VerticalDivider(
-          width: 1,
-          thickness: 1,
-        ),
         Expanded(child: _pages[_currentPage])
       ],
     );
@@ -108,17 +114,17 @@ class _MyHomePageState extends State<MyHomePage> {
     {
       case 0:
         setState(() {
-          _currentPage = 0;
+          _currentPage = 0; //open the home page
         });
         break;
       case 1:
         setState(() {
-          _currentPage = 1;
+          _currentPage = 1;  //open the stock page
         });
         break;
       case 2:
         setState(() {
-          _currentPage = 2;
+          _currentPage = 2; //open the news page
         });
         break;
       case 3:
