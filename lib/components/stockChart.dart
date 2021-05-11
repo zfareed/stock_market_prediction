@@ -21,6 +21,7 @@ class _StockChartState extends State<StockChart> {
     print(response.statusCode);
     var stockData = response.data;
     print(stockData);
+    print(stockData.runtimeType);
     print('\n');
 
     var stockValues = stockData['Time Series (Daily)'];
@@ -44,7 +45,7 @@ class _StockChartState extends State<StockChart> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    callgraphAPI();
+    //callgraphAPI();
   }
 
 

@@ -27,6 +27,8 @@ class _StateStockData extends State<StockData> {
     print(response.statusCode);
     var stockData = response.data;
     print(stockData);
+    print(stockData.runtimeType);
+
     stockData = stockData['Global Quote'];
     var price = stockData['05. price'];
     var changePrice = stockData['10. change percent'];
@@ -44,15 +46,6 @@ class _StateStockData extends State<StockData> {
     dayHigh = dayHigh.substring(0,6);
     dayLow = dayLow.substring(0,6);
     open = open.substring(0,6);
-
-
-    // print(price);
-    // print(changePrice);
-    // print(volume);
-    // print(prevClose);
-    // print(dayHigh);
-    // print(dayLow);
-    // print(open);
 
     updateData(price, changePrice, volume, prevClose, dayHigh, dayLow, open);
   }
@@ -76,7 +69,6 @@ class _StateStockData extends State<StockData> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    calltheAPI();
   }
 
 
