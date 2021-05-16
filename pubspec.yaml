@@ -26,6 +26,7 @@ dependencies:
   dio: ^4.0.0
   syncfusion_flutter_charts: ^19.1.59
   http: ^0.13.3
+  url_launcher: ^6.0.3
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -35,8 +36,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_admin_scaffold: ^1.0.0
-  collapsible_sidebar: ^2.0.0
+
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

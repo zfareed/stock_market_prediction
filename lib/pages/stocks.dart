@@ -44,7 +44,7 @@ class _StockRouteState extends State<StocksRoute> {
                   height: 150.0,
                   margin: EdgeInsets.all(10.0),
                   color: Color(themeColor),
-                  child: Center(child: Text('Apple Inc [AAPL]', style: TextStyle(fontSize: 50.0, color: Colors.white),)),
+                  child: Center(child: Text('Apple Inc [AAPL]' , style: TextStyle(fontSize: 50.0, color: Colors.white),)),
                 ),
                 Container(
                   width: double.infinity,
