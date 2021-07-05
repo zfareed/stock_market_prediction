@@ -13,19 +13,24 @@ class StockNews extends StatefulWidget {
 
   @override
   _StockNewsState createState() => _StockNewsState();
+
+  String ticker;
+  StockNews(this.ticker);
 }
 
 class _StockNewsState extends State<StockNews> {
 
   Future<List<News>> _getNews() async {
 
-    var url = Uri.parse('https://financialmodelingprep.com/api/v3/stock_news?tickers=TSLA&limit=5&apikey=004e65b4047483275d6a8362b04edb0e');
+    var TICKER = widget.ticker;
+    var url = Uri.parse('https://financialmodelingprep.com/api/v3/stock_news?tickers='+TICKER+'&limit=5&apikey=004e65b4047483275d6a8362b04edb0e');
     final response = await http.get(url);
 
-    print(response.statusCode);
+    //print(response.statusCode);
+    print("Stock News...");
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
-      return jsonResponse.map((job) => new News.fromJson(job)).toList();
+      return jsonResponse.map((news) => new News.fromJson(news)).toList();
     } else {
       throw Exception('Failed to load jobs from API');
     }
@@ -103,6 +108,7 @@ class _StockNewsState extends State<StockNews> {
 
 
         ),
+
       );
 
 

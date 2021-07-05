@@ -1,51 +1,78 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:http/http.dart' as http;
+
 
 
 class StockChart extends StatefulWidget {
   @override
   _StockChartState createState() => _StockChartState();
+
+  String ticker;
+  StockChart(this.ticker);
 }
 
 class _StockChartState extends State<StockChart> {
   var themeColor = 0xff344955;
 
-  void callgraphAPI() async {
+  List<_StockData> data = [
+  ];
+
+  Future<List<_StockData>> getData() async {
+
+    data.clear();
     var dio = Dio();
+    var TICKER = widget.ticker;
     var API_KEY = 'OQ8HZO2HZ3X3XEMI';
-    var TICKER = 'TSLA';
     var url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='+TICKER+'&apikey='+API_KEY;
     final response = await dio.get(url);
-    print(response.statusCode);
-    var stockData = response.data;
-    print(stockData);
-    print(stockData.runtimeType);
-    print('\n');
+    print("Stock Chart...");
 
+
+    var stockData = response.data;
     var stockValues = stockData['Time Series (Daily)'];
-    print(stockValues);
-    stockValues.forEach((k,v) =>   addgraphData(k, double.parse(v['1. open']))); //print('${k}: ${v['1. open']}'));
+    stockValues.forEach((k,v) =>   addgraphData(k, double.parse(v['1. open'])));
+
+    return data;
 
   }
 
   void addgraphData(var date, var open){
-    setState(() {
-      data.add(_StockData(date, open));
-    });
+    data.add(_StockData(date, open));
+}
 
 
-  }
+  late CrosshairBehavior crosshair;
+  late TrackballBehavior _trackballBehavior;
 
-  List<_StockData> data = [
-  ];
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    //callgraphAPI();
+    crosshair = CrosshairBehavior(
+        enable: true,
+        activationMode: ActivationMode.singleTap,
+        hideDelay: 2000,
+        shouldAlwaysShow: false,
+        lineType: CrosshairLineType.both,
+        lineWidth: 1
+    );
+    _trackballBehavior = TrackballBehavior(
+      lineWidth: 0,
+        enable: true,
+        tooltipDisplayMode: TrackballDisplayMode.floatAllPoints,
+      activationMode: ActivationMode.singleTap,
+      tooltipSettings: InteractiveTooltip(
+        enable: true,
+        borderWidth: 0,
+        color: Colors.orange,
+        textStyle: TextStyle(fontSize: 15, color: Colors.white)
+      )
+    );
   }
 
 
@@ -54,9 +81,9 @@ class _StockChartState extends State<StockChart> {
 
     //graph gradient colors
     final List<Color> color = <Color>[];
-    color.add(Colors.orange.shade50);
-    color.add(Colors.orange.shade200);
-    color.add(Colors.orange.shade300);
+    color.add(Colors.blue.shade50);
+    color.add(Colors.blue.shade200);
+    color.add(Colors.blue.shade300);
 
     final List<double> stops = <double>[];
     stops.add(0.0);
@@ -75,33 +102,57 @@ class _StockChartState extends State<StockChart> {
             borderRadius: BorderRadius.all(Radius.circular(5)),
             side: BorderSide(width: 0.5, color: Colors.white)),
         color: Color(themeColor),
-        child: SfCartesianChart(
-            primaryXAxis: CategoryAxis(),
-            // Chart title
-            title: ChartTitle(text: 'Graph'),
-            // Enable legend
-            legend: Legend(isVisible: false),
-            // Enable tooltip
-            tooltipBehavior: TooltipBehavior(enable: true),
-            series: <ChartSeries<_StockData, String>>[
-              AreaSeries<_StockData, String>(
-                dataSource: data,
-                xValueMapper: (_StockData sales, _) => sales.date,
-                yValueMapper: (_StockData sales, _) => sales.open,
-                gradient: gradientColors,
-                borderColor: Colors.orange,
-                borderWidth: 3,
-              ),
-            ]),
+        child: FutureBuilder<List<_StockData>>(
+          future: getData(),
+          builder: (context, snapshot){
+            if(snapshot.hasData){
+              List<_StockData> data = snapshot.data!;
+              return SfCartesianChart(
+                crosshairBehavior: crosshair,
+                  primaryXAxis: CategoryAxis(),
+                  // Chart title
+                  title: ChartTitle(text: 'Graph'),
+                  // Enable legend
+                  legend: Legend(isVisible: false),
+                  // Enable tooltip
+                  // tooltipBehavior: TooltipBehavior(
+                  //     enable: true,
+                  //     header: 'Open Price',
+                  //     tooltipPosition: TooltipPosition.pointer,
+                  // ),
+                  trackballBehavior: _trackballBehavior,
+                  series: <ChartSeries<_StockData, String>>[
+                    AreaSeries<_StockData, String>(
+                      dataSource: data,
+                      xValueMapper: (_StockData sales, _) => sales.date,
+                      yValueMapper: (_StockData sales, _) => sales.open,
+                      gradient: gradientColors,
+                      borderColor: Colors.blue,
+                      borderWidth: 3,
+                    ),
+                  ]
+              );
+            }else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+    }
+              return Center(child: CircularProgressIndicator());
+    },
+
+
+        ),
       ),
     );
   }
+
+
 }
 
 class _StockData {
-  _StockData(this.date, this.open);
 
   final String date;
   final double open;
+
+  _StockData(this.date, this.open);
+
 }
 

@@ -42,13 +42,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectedDestination = 0;
+  int _selectedIndex = 11;
   int _currentPage = 1;
+  List<String> stockTickers = ['AAPL', 'GOOG', 'MSFT', 'TSLA', 'AMZN', 'NFLX', 'FB', 'WMT', 'NVDA', 'BABA'];
+  List<String> stockCompanies = ['Apple Inc. (AAPL)', 'Alphabet Inc. (GOOG)', 'Microsoft Corporation (MSFT)', 'Tesla, Inc. (TSLA)',
+  'Amazon.com, Inc. (AMZN)', 'Netflix, Inc. (NFLX)', 'Facebook, Inc. (FB)', 'Walmart Inc. (WMT)', 'NVIDIA Corporation (NVDA)'
+  'Alibaba Group Holding Limited (BABA)'];
+
   final List<Widget> _pages = [
     HomeRoute(),
-    StocksRoute(),
+    StocksRoute('TICKER', 'COMPANY'),
     NewsRoute()
   ];
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -61,36 +68,64 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Container(
             color: theme.backgroundColor,
             child: ListView(
-              padding: EdgeInsets.only(top: 50.0),
+              padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
               children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(bottom: 20),
+                  child: Column(
+                    children: [
+                      Center(child: Text('Stock Market\n Prediction', style: TextStyle(color: Colors.white, fontSize: 30.0,),)),
+                      SizedBox(height: 10,),
+                      Divider(height: 0.5,thickness: 0.5,color: Colors.white,)
+                    ],
+                  ),
+
+                ),
                 ListTile(
                   contentPadding: EdgeInsets.only(left: 80),
                   selectedTileColor: Color(0xfff9aa33),
                     title: Text('Home', style: TextStyle(color: Colors.white, fontSize: 20),),
-                    selected: _selectedDestination == 0,
-                    onTap: () => selectDestination(0),
+                    selected: _selectedIndex == 11,
+                    onTap: () => selectDestination(11),
                   ),
-                ListTile(
-                  contentPadding: EdgeInsets.only(left: 80),
-                  selectedTileColor: Color(0xfff9aa33),
-                    title: Text('Stocks', style: TextStyle(color: Colors.white, fontSize: 20),),
-                    selected: _selectedDestination == 1,
-                    onTap: () => selectDestination(1),
-                  ),
+                // ExpansionTile(
+                //   maintainState: false,
+                //   tilePadding: EdgeInsets.only(left: 80),
+                //   title: Text('Stocks', style: TextStyle(color: Colors.white, fontSize: 20),),
+                //   children: [
+                //     Container(
+                //       height: 300,
+                //       child: ListView.builder(
+                //         shrinkWrap: true,
+                //         itemCount: stockTickers.length,
+                //         itemBuilder: (BuildContext context, int index) {
+                //           return ListTile(
+                //             contentPadding: EdgeInsets.only(left: 140),
+                //             selectedTileColor: Color(0xfff9aa33),
+                //             title: Text(stockTickers[index], style: TextStyle(color: Colors.white, fontSize: 15),),
+                //             selected: index == _selectedIndex,
+                //             onTap: () => selectDestination(index),
+                //           );
+                //         },
+                //       ),
+                //     )
+                //   ],
+                // ),
                 ListTile(
                   contentPadding: EdgeInsets.only(left: 80),
                   selectedTileColor: Color(0xfff9aa33),
                   title: Text('News', style: TextStyle(color: Colors.white, fontSize: 20),),
-                  selected: _selectedDestination == 2,
-                  onTap: () => selectDestination(2),
+                  selected: _selectedIndex == 12,
+                  onTap: () => selectDestination(12),
                 ),
                 ListTile(
                   contentPadding: EdgeInsets.only(left: 80),
                   selectedTileColor: Color(0xfff9aa33),
                   title: Text('About Us', style: TextStyle(color: Colors.white, fontSize: 20),),
-                  selected: _selectedDestination == 3,
-                  onTap: () => selectDestination(3),
+                  selected: _selectedIndex == 13,
+                  onTap: () => selectDestination(13),
                 ),
+
 
 
               ],
@@ -107,27 +142,46 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void selectDestination(int index) {
     setState(() {
-      _selectedDestination = index;
+      _selectedIndex = index;
     });
-    switch(_selectedDestination)
+    switch(_selectedIndex)
     {
       case 0:
         setState(() {
-          _currentPage = 0; //open the home page
+          _pages[1] = StocksRoute(stockTickers[index], stockCompanies[index]);
+          _currentPage = 1; //open the stock page
         });
         break;
       case 1:
         setState(() {
+          _pages[1] = StocksRoute(stockTickers[index], stockCompanies[index]);
           _currentPage = 1;  //open the stock page
         });
         break;
       case 2:
         setState(() {
-          _currentPage = 2; //open the news page
+          _pages[1] = StocksRoute(stockTickers[index], stockCompanies[index]);
+          _currentPage = 1; //open the stock page
         });
         break;
       case 3:
         //
+      case 11:
+        setState(() {
+          _currentPage = 0; //open the home page
+        });
+        break;
+      case 12:
+        setState(() {
+          _currentPage = 0; //open the news page
+        });
+        break;
+      case 13:
+        setState(() {
+          _currentPage = 0; //open the About Us page
+        });
+        break;
+
     }
   }
 }
