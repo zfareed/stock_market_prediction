@@ -1,10 +1,14 @@
 import 'dart:convert';
+import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stock_market_prediction/components/stockNews.dart';
 import 'package:stock_market_prediction/components/stockChart.dart';
 import 'package:stock_market_prediction/components/stockData.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+
 
 class StocksRoute extends StatefulWidget {
   @override
@@ -21,6 +25,74 @@ class _StockRouteState extends State<StocksRoute> {
       TextStyle(color: Colors.white, fontSize: 15.0, fontFamily: 'Hind');
   var themeColor = 0xff344955;
 
+  bool _initialized = false;
+  bool _error = false;
+  final dataRef = FirebaseFirestore.instance.collection('stocks').doc("BABA").collection("sentiments").doc('twitterSentiments');
+  double positive = 100;
+  double negative = 0;
+  double neutral = 0;
+  String posPersent = "";
+  String negPersent = "";
+  String neuPersent = "";
+
+  // _StockRouteState(this.posPersent, this.negPersent, this.neuPersent){
+  //   posPersent = "$positive%";
+  //   negPersent = "$negative%";
+  //   neuPersent = "$neutral%";
+  //
+  // }
+
+
+
+  void initializeFlutterFire() async {
+    print("initilazi");
+    try {
+      // Wait for Firebase to initialize and set `_initialized` state to true
+      await Firebase.initializeApp();
+      setState(() {
+        _initialized = true;
+      });
+    } catch(e) {
+      // Set `_error` state to true if Firebase initialization fails
+      setState(() {
+        _error = true;
+      });
+    }
+  }
+
+
+  void getFirebaseData(){
+
+    print("getfirebasedata...");
+    dataRef.get().then((DocumentSnapshot doc) {
+      if(doc.exists) {
+        setState(() {
+          positive = doc['positive'];
+          negative = doc['negative'];
+          neutral = doc['neutral'];
+          posPersent = "$positive%";
+          negPersent = "$negative%";
+          neuPersent = "$neutral%";
+
+        });
+      }
+    });
+
+
+
+
+  }
+
+
+
+
+  @override
+  void initState() {
+    initializeFlutterFire();
+    getFirebaseData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     TextStyle textStyle1 =
@@ -29,9 +101,9 @@ class _StockRouteState extends State<StocksRoute> {
 
     //chart data
     final List<ChartData> chartData = [
-    ChartData('Positive', 25, Colors.green),
-    ChartData('Negative', 38, Colors.blue),
-    ChartData('Neutral', 34, Colors.red),
+    ChartData('Positive', positive, posPersent, Colors.green),
+    ChartData('Negative', negative, negPersent,Colors.blue),
+    ChartData('Neutral', neutral, neuPersent, Colors.red),
     ];
 
     return Scaffold(
@@ -86,8 +158,9 @@ class _StockRouteState extends State<StocksRoute> {
                           enableSmartLabels: true,
                             dataSource: chartData,
                             pointColorMapper:(ChartData data,  _) => data.color,
-                            xValueMapper: (ChartData data, _) => data.x,
-                            yValueMapper: (ChartData data, _) => data.y,
+                            xValueMapper: (ChartData data, _) => data.label,
+                            yValueMapper: (ChartData data, _) => data.value,
+                            dataLabelMapper: (ChartData data, _) => data.perscent,
                       dataLabelSettings: DataLabelSettings(
                           isVisible: true
                         )
@@ -119,8 +192,12 @@ class _StockRouteState extends State<StocksRoute> {
 }
 
 class ChartData {
-  ChartData(this.x, this.y, this.color);
-  final String x;
-  final double y;
+  ChartData(this.label, this.value, this.perscent, this.color);
+  final String label;
+  final double value;
+  final String perscent;
   final Color color;
+
 }
+
+
