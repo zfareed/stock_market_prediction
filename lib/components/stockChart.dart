@@ -27,15 +27,13 @@ class _StockChartState extends State<StockChart> {
     data.clear();
     var dio = Dio();
     var TICKER = widget.ticker;
-    var API_KEY = 'OQ8HZO2HZ3X3XEMI';
-    var url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='+TICKER+'&apikey='+API_KEY;
+    var url = "http://127.0.0.1:5000/stocks/" + TICKER;
     final response = await dio.get(url);
     print("Stock Chart...");
 
 
     var stockData = response.data;
-    var stockValues = stockData['Time Series (Daily)'];
-    stockValues.forEach((k,v) =>   addgraphData(k, double.parse(v['1. open'])));
+    stockData.forEach((k,v) =>   addgraphData(k, v));
 
     return data;
 

@@ -43,7 +43,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 11;
-  int _currentPage = 1;
+  int _currentPage = 0;
   List<String> stockTickers = ['AAPL', 'GOOG', 'MSFT', 'TSLA', 'AMZN', 'NFLX', 'FB', 'WMT', 'NVDA', 'BABA'];
   List<String> stockCompanies = ['Apple Inc. (AAPL)', 'Alphabet Inc. (GOOG)', 'Microsoft Corporation (MSFT)', 'Tesla, Inc. (TSLA)',
   'Amazon.com, Inc. (AMZN)', 'Netflix, Inc. (NFLX)', 'Facebook, Inc. (FB)', 'Walmart Inc. (WMT)', 'NVIDIA Corporation (NVDA)'
@@ -88,29 +88,29 @@ class _MyHomePageState extends State<MyHomePage> {
                     selected: _selectedIndex == 11,
                     onTap: () => selectDestination(11),
                   ),
-                // ExpansionTile(
-                //   maintainState: false,
-                //   tilePadding: EdgeInsets.only(left: 80),
-                //   title: Text('Stocks', style: TextStyle(color: Colors.white, fontSize: 20),),
-                //   children: [
-                //     Container(
-                //       height: 300,
-                //       child: ListView.builder(
-                //         shrinkWrap: true,
-                //         itemCount: stockTickers.length,
-                //         itemBuilder: (BuildContext context, int index) {
-                //           return ListTile(
-                //             contentPadding: EdgeInsets.only(left: 140),
-                //             selectedTileColor: Color(0xfff9aa33),
-                //             title: Text(stockTickers[index], style: TextStyle(color: Colors.white, fontSize: 15),),
-                //             selected: index == _selectedIndex,
-                //             onTap: () => selectDestination(index),
-                //           );
-                //         },
-                //       ),
-                //     )
-                //   ],
-                // ),
+                ExpansionTile(
+                  maintainState: false,
+                  tilePadding: EdgeInsets.only(left: 80),
+                  title: Text('Stocks', style: TextStyle(color: Colors.white, fontSize: 20),),
+                  children: [
+                    Container(
+                      height: 300,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: stockTickers.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return ListTile(
+                            contentPadding: EdgeInsets.only(left: 140),
+                            selectedTileColor: Color(0xfff9aa33),
+                            title: Text(stockTickers[index], style: TextStyle(color: Colors.white, fontSize: 15),),
+                            selected: index == _selectedIndex,
+                            onTap: () => selectDestination(index),
+                          );
+                        },
+                      ),
+                    )
+                  ],
+                ),
                 ListTile(
                   contentPadding: EdgeInsets.only(left: 80),
                   selectedTileColor: Color(0xfff9aa33),
