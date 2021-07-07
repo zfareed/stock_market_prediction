@@ -50,6 +50,7 @@ class _StockChartState extends State<StockChart> {
 
   @override
   void initState() {
+    print("chart initilaze...........");
     super.initState();
     crosshair = CrosshairBehavior(
         enable: true,

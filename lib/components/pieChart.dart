@@ -17,18 +17,8 @@ class _PieChartState extends State<PieChart> {
   bool _initialized = false;
   bool _error = false;
 
-  final dataRef = FirebaseFirestore.instance.collection('stocks').doc("AAPL").collection("sentiments").doc('twitterSentiments');
-  double positive = 100;
-  double negative = 0;
-  double neutral = 0;
-  String posPersent = "";
-  String negPersent = "";
-  String neuPersent = "";
-
-
 
   void initializeFlutterFire() async {
-    print("initilazi");
     try {
       // Wait for Firebase to initialize and set `_initialized` state to true
       await Firebase.initializeApp();
@@ -44,35 +34,10 @@ class _PieChartState extends State<PieChart> {
   }
 
 
-  void getFirebaseData(){
-
-    print("getfirebasedata...");
-    dataRef.get().then((DocumentSnapshot doc) {
-      if(doc.exists) {
-        setState(() {
-          positive = doc['positive'];
-          negative = doc['negative'];
-          neutral = doc['neutral'];
-          posPersent = "$positive%";
-          negPersent = "$negative%";
-          neuPersent = "$neutral%";
-
-        });
-      }
-    });
-
-
-
-
-  }
-
-
-
-
   @override
   void initState() {
     initializeFlutterFire();
-    getFirebaseData();
+    //getFirebaseData();
     super.initState();
   }
 
@@ -85,38 +50,54 @@ class _PieChartState extends State<PieChart> {
 
   @override
   Widget build(BuildContext context) {
+    final dataRef = FirebaseFirestore.instance.collection('stocks').doc(widget.ticker).collection("sentiments").doc('twitterSentiments');
 
-    //chart data
-    final List<ChartData> chartData = [
-      ChartData('Positive', positive, posPersent, Colors.green),
-      ChartData('Negative', negative, negPersent,Colors.blue),
-      ChartData('Neutral', neutral, neuPersent, Colors.red),
-    ];
 
-    return Container(
-        child: SfCircularChart(
-            legend: Legend(
-                textStyle: TextStyle(
-                    fontSize: 20
-                ),
-                isVisible: true,
-                position: LegendPosition.bottom
-            ),
-            series: <CircularSeries>[
-              // Render pie chart
-              PieSeries<ChartData, String>(
-                  enableSmartLabels: true,
-                  dataSource: chartData,
-                  pointColorMapper:(ChartData data,  _) => data.color,
-                  xValueMapper: (ChartData data, _) => data.label,
-                  yValueMapper: (ChartData data, _) => data.value,
-                  dataLabelMapper: (ChartData data, _) => data.perscent,
-                  dataLabelSettings: DataLabelSettings(
-                      isVisible: true
-                  )
-              )
-            ]
-        )
+    return FutureBuilder<DocumentSnapshot>(
+      future: dataRef.get(),
+        builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.hasData) {
+            Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
+            var pos = data['positive'];
+            var neg = data['negative'];
+            var neu = data['neutral'];
+            String posPersent = "$pos%";
+            String negPersent = "$neg%";
+            String neuPersent = "$neu%";
+            final List<ChartData> chartData = [
+              ChartData('Positive', pos, posPersent, Colors.green),
+              ChartData('Negative', neg, negPersent,Colors.blue),
+              ChartData('Neutral', neu, neuPersent, Colors.red),
+            ];
+            return Container(
+                child: SfCircularChart(
+                    legend: Legend(
+                        textStyle: TextStyle(
+                            fontSize: 20
+                        ),
+                        isVisible: true,
+                        position: LegendPosition.bottom
+                    ),
+                    series: <CircularSeries>[
+                      // Render pie chart
+                      PieSeries<ChartData, String>(
+                          enableSmartLabels: true,
+                          dataSource: chartData,
+                          pointColorMapper:(ChartData data,  _) => data.color,
+                          xValueMapper: (ChartData data, _) => data.label,
+                          yValueMapper: (ChartData data, _) => data.value,
+                          dataLabelMapper: (ChartData data, _) => data.perscent,
+                          dataLabelSettings: DataLabelSettings(
+                              isVisible: true
+                          )
+                      )
+                    ]
+                )
+            );
+          }
+          return Text('aaa');
+        }
+
     );
   }
 }
